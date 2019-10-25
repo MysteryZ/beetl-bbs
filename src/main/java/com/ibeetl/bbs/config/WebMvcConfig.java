@@ -1,18 +1,12 @@
 package com.ibeetl.bbs.config;
 
 import com.ibeetl.bbs.common.WebUtils;
-import com.ibeetl.bbs.model.BbsUser;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,24 +29,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
             @Override
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                                      Object handler) throws Exception {
-
-                String requestURI = request.getServletPath();
                 if (webUtils.currentUser() == null) {
-                    //未登陆用户，记录访问地址，登陆后可以直接跳转到此页面
-                    if (!requestURI.contains("/bbs/user/login")) {
-                        request.getSession(true).setAttribute("lastAccess", requestURI);
-                    }
-                }
-                if (requestURI.contains("/bbs/admin/") || requestURI.contains("/bbs/topic/add")) {
-                    BbsUser user = webUtils.currentUser();
-                    if (user == null) {
-                        response.sendRedirect(request.getContextPath() + "/user/loginPage");
-                        return false;
-                    }
+                    response.sendRedirect(request.getContextPath());
+                    return false;
                 }
                 return true;
             }
-        }).addPathPatterns("/bbs/**");
+        }).addPathPatterns(
+                "/bbs/topic/add","/topic/add",
+                "/bbs/myMessage","/myMessage",
+                "/bbs/admin/**","/admin/**"
+        );
     }
 
     /**
@@ -69,7 +56,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //外部静态资源的处理（用于图片上传后的URL映射）
-        registry.addResourceHandler("/bbs/showPic/**")
+        registry.addResourceHandler("/bbs/showPic/**", "/showPic/**")
                 .addResourceLocations("file:upload" + File.separator);
     }
 
@@ -77,6 +64,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         //无逻辑处理的控制器路由
         registry.setOrder(-1);//解决 => /bbs/topic/{id}导致匹配不到此处路由的问题
+        registry.addViewController("/topic/add").setViewName("/post.html");
         registry.addViewController("/bbs/topic/add").setViewName("/post.html");
         registry.addViewController("/bbs/share").setViewName("forward:/bbs/topic/module/1");
     }

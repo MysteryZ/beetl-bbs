@@ -4,14 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beetl 论坛</title>
+	<base href="${ctxPath}/"/>
     <meta name="keywords" content="Beetl,BeetlSql">
     <meta name="description" content="论坛模板">
-    <link rel="shortcut icon" href="${ctxPath}/static/img/favicon.ico">
-<!-- 	<link href="${ctxPath}/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="shortcut icon" href="static/img/favicon.ico">
+<!-- 	<link href="css/bootstrap.min.css" rel="stylesheet"> -->
 	<link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><!-- 部分content的里面可能用到jQuery，所以前置了 -->
-    <script src="${ctxPath}/js/alert.js"></script><!-- 自己写的一个简单的jq弹窗插件 -->
+    <script src="js/alert.js"></script><!-- 自己写的一个简单的jq弹窗插件 -->
     <style type="text/css">
     	.ani{-webkit-transition: all .3s ease-out;-ms-transition: all .3s ease-out;-moz-transition: all .3s ease-out;-o-transition: all .3s ease-out;transition: all .3s ease-out;}
 		.serach .form-control{border-color: #ffce3d;}
@@ -65,7 +66,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/bbs/bbs/index">
+      <a class="navbar-brand" href="${ctxPath}">
       <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1880"><path d="M832.299957 714.965621c-71.047126 88.067778-148.2126 70.077032-148.2126 70.077032 77.615729-65.686025 74.107835-233.597269 74.107835-233.597269 56.979736 6.564509 74.104765 93.439112 74.104765 93.439112 2.635013 53.857629 148.21567 93.439112 148.21567 93.439112C887.304711 721.78698 832.299957 714.965621 832.299957 714.965621zM513.173732 467.12086c0 0-26.707268-15.610536-21.554922-82.356706 0 0 43.672662-370.594433 237.145072-313.196165 0 0 128.243803 88.283696-21.580504 292.610314C707.182354 364.178303 570.780755 504.72634 513.173732 467.12086zM560.578392 504.72634c31.834033 103.172801-49.409316 210.239282-49.409316 210.239282-95.057983 32.713053-67.633377-56.756655-67.633377-56.756655 58.984393-61.013609 42.930765-130.125663 42.930765-130.125663C512.189312 506.013659 560.578392 504.72634 560.578392 504.72634zM214.740806 668.246577c0 0-15.826454-68.054979 9.243525-99.791797 0 0 19.540032 53.137221 64.86431 6.345522 0 0 13.948687-61.868069-50.226938-47.768957 0 0 21.086248-69.096704 66.274426-103.007025-82.760912-100.30652-238.370992-82.821287-238.370992-82.821287-51.842739-30.236652 0-46.715975 0-46.715975 135.454018-0.991584 222.324528 93.439112 222.324528 93.439112-23.989367-126.739543-148.21567-163.520237-148.21567-163.520237-39.818891-48.290843 17.485233-35.68371 17.485233-35.68371 126.141932 81.534991 149.874449 190.310394 154.345274 230.244918 20.531616-12.791327 45.414329-18.281365 75.196633-7.67889 0 0 156.796092 73.606415-24.702612 256.95935C362.956476 668.246577 246.483764 776.989233 214.740806 668.246577zM706.990996 513.219781c30.182416 116.948549-22.903639 201.74584-22.903639 201.74584-59.500139 125.21891-148.21567 46.719044-148.21567 46.719044 93.910856-94.708012 98.807377-256.95935 98.807377-256.95935C675.925467 502.981602 706.990996 513.219781 706.990996 513.219781z" p-id="1881"></path></svg>
       Beetl-BBS
       </a>
@@ -74,12 +75,12 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a href="${ctxPath}/bbs/">${pageName!"首页综合"}</a></li>
+        <li><a href="">${pageName!"首页综合"}</a></li>
        <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">板块 <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
            @for(moudle in moduleList){
-				<li><a href="${ctxPath}/bbs/topic/module/${moudle.id}">${moudle.name} </a></li>
+				<li><a href="topic/module/${moudle.id}">${moudle.name} </a></li>
 			@}
           </ul>
         </li>
@@ -100,7 +101,7 @@
 		@}else{
 
 				@if(allowAdd){
-		  		<li><a href="/bbs/bbs/topic/add"><i class="fa fa-plus"></i> 发帖</a></li>
+		  		<li><a href="topic/add"><i class="fa fa-plus"></i> 发帖</a></li>
 				@}
 		  		<li class="dropdown">
 				@ var mcount = c.myMessageCount(_user.id);
@@ -109,13 +110,13 @@
 						<li><a href="javascript:;">你已有${_user.score}积分</a></li>
 						<li><a href="javascript:;">等级：${level(_user.level)}</a></li>
 						@if(isAdmin){
-							<li><a href="javascript:;" id="initEs" data-href="${ctxPath}/bbs/admin/es/init">初始化ES索引</a></li>
+							<li><a href="javascript:;" id="initEs" data-href="bbs/admin/es/init">初始化ES索引</a></li>
 						@}
 						<li class="divider"></li>
-						<li><a href="${ctxPath}/bbs/myMessage">给我的回复</a></li>
+						<li><a href="myMessage">给我的回复</a></li>
 					</ul>
 				</li>
-				<li><a href="javascript:;" onclick="$.post('${ctxPath}/bbs/user/logout',function(){location.reload()})"><i class="fa fa-sign-out"></i> 注销</a></li>
+				<li><a href="javascript:;" onclick="$.post('bbs/user/logout',function(){location.reload()})"><i class="fa fa-sign-out"></i> 注销</a></li>
 		@}
        
       </ul>
@@ -187,7 +188,7 @@
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-body">
-					<form action="${ctxPath}/bbs/user/login" onsubmit="return ajaxSubmit(this,'reload')">
+					<form action="bbs/user/login" onsubmit="return ajaxSubmit(this,'reload')">
 		                <div class="form-group">
 							<label>用户名</label>
 							<input type="text" placeholder="请输入您用户名" name="userName"  class="form-control">
@@ -206,7 +207,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-body">
-					<form class="form-horizontal m-t" id="signupForm" action="${ctxPath}/bbs/user/doRegister" method="POST" onsubmit="return ajaxSubmit(this)">
+					<form class="form-horizontal m-t" id="signupForm" action="user/doRegister" method="POST" onsubmit="return ajaxSubmit(this)">
 			              <div class="form-group">
 			                  <label class="col-sm-3 control-label">用户名：</label>
 			                  <div class="col-sm-8">
@@ -236,7 +237,7 @@
 			                  <label class="col-sm-3 control-label">验证码：</label>
 			                  <div class="col-sm-8" style="position:relative;">
 			                      <input id="code" name="code" class="form-control" type="text" aria-required="true" aria-invalid="false" class="valid">
-			                  		<img src="${ctxPath}/bbs/user/authImage" onclick="this.src='${ctxPath}/bbs/user/authImage?_='+Date.now()" title="点击刷新验证码" style="position:absolute;height:32px;top:1px;right:16px;cursor:pointer;border-radius:0 4px 4px 0">
+			                  		<img src="bbs/user/authImage" onclick="this.src='bbs/user/authImage?_='+Date.now()" title="点击刷新验证码" style="position:absolute;height:32px;top:1px;right:16px;cursor:pointer;border-radius:0 4px 4px 0">
 			                  	</div>
 			              </div>
 			              <div class="form-group">
@@ -254,10 +255,10 @@
 		
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     @if( _user!=null && requiredEditor!false){
-    <link rel="stylesheet" href="${ctxPath}/simditor/simditor.min.css" />
+    <link rel="stylesheet" href="simditor/simditor.min.css" />
     <script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js"></script>
     <script src="//cdn.bootcss.com/to-markdown/3.0.3/to-markdown.min.js"></script>
-    <script type="text/javascript" src="${ctxPath}/simditor/simditor.min.js"></script>
+    <script type="text/javascript" src="simditor/simditor.min.js"></script>
     <script type="text/javascript">
 		var editor = new Simditor({
 			textarea: $('#postContent'),
@@ -268,7 +269,7 @@
 			//按Beetl论坛的用处来看，暂时只需要如下几个语言（HTML、XML、json、java、javascript、markdown、sql）,如有需要再扩展
 			codeLanguages:[{name:'HTML,XML',value:'html'},{name:'JSON',value:'json'},{name:'Java',value:'java'},{name:'JavaScript',value:'js'},{name:'Markdown',value:'markdown'},{name:'SQL',value:'sql'}],
 			upload:{
-				url: '${ctxPath}/bbs/upload',
+				url: 'bbs/upload',
 				fileKey: 'editormd-image-file',
 				connectionCount: 3,
 				leaveConfirm: '上传正在进行中，确定要离开当前页面吗？'
@@ -288,7 +289,7 @@
 	 function ajaxSubmit(form,reload){
 		 form = $(form);
 		 $.post(form.attr('action'),form.serialize(),function(json){
-			 json.err?$.alert(json.msg):reload?location.reload():location.replace('${ctxPath}'+json.msg);
+			 json.err?$.alert(json.msg):reload?location.reload():location.replace(json.msg||'');
 		 })
 		 return false;
 	 }
@@ -308,7 +309,7 @@ $(function(){
 	$('#serach-btn').on('click',function(){
 		var keyword = $('#keyword').val().trim();
 		keyword = encodeURI(keyword);
-		location.href = '/bbs/bbs/index/1.html?keyword='+keyword;
+		location.href = '?keyword='+keyword;
 	})
 	$("#keyword").on('keydown',function (e) {
         if (e.keyCode == 13) {

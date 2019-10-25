@@ -26,6 +26,7 @@ import java.util.Date;
 
 
 @Controller
+@RequestMapping({"/bbs/user","/user"})
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class LoginController {
@@ -43,7 +44,7 @@ public class LoginController {
      * 登录方法改为ajax方式登录
      */
     @ResponseBody
-    @RequestMapping("/bbs/user/login")
+    @PostMapping("/login")
     public JSONObject login(String userName, String password) {
         JSONObject result = new JSONObject();
         result.put("err", 1);
@@ -56,7 +57,7 @@ public class LoginController {
                 result.put("msg", "用户不存在或密码错误");
             } else {
                 webUtils.loginUser(user, true);
-                result.put("msg", "/bbs/");
+                result.put("msg", "index");
                 result.put("err", 0);
             }
         }
@@ -68,7 +69,7 @@ public class LoginController {
      * 登出方法改为ajax方式登出
      */
     @ResponseBody
-    @PostMapping("/bbs/user/logout")
+    @PostMapping("/logout")
     public void logout() {
         webUtils.logoutUser();
     }
@@ -77,7 +78,7 @@ public class LoginController {
      * 注册改为 ajax 方式注册
      */
     @ResponseBody
-    @PostMapping("/bbs/user/doRegister")
+    @PostMapping("/doRegister")
     public JSONObject register(BbsUser user, String code) {
         JSONObject result = new JSONObject();
         result.put("err", 1);
@@ -107,12 +108,12 @@ public class LoginController {
             user = bbsUserService.setUserAccount(user);
             webUtils.loginUser(user, true);
             result.put("err", 0);
-            result.put("msg", "/bbs/index");
+            result.put("msg", "index");
         }
         return result;
     }
 
-    @RequestMapping("/bbs/user/authImage")
+    @RequestMapping("/authImage")
     public void authImage() throws IOException {
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
@@ -131,7 +132,7 @@ public class LoginController {
 
     }
 
-    @RequestMapping("/bbs/user/postAuthImage")
+    @RequestMapping("/postAuthImage")
     public void pousAuthImage() throws IOException {
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
