@@ -26,11 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 @Aspect
@@ -141,6 +137,7 @@ public class AOPConfig {
                 methodName = method.getName() + "Fallback";
             }
             try {
+                log.warn("ES服务[{}]调用失败;{}，开始进行降级处理...",method.getName(),throwable.getMessage());
                 Method fallbackMethod = target.getClass().getMethod(methodName, method.getParameterTypes());
                 if (fallbackMethod.getReturnType() == method.getReturnType()) {
                     method.setAccessible(Boolean.TRUE);
