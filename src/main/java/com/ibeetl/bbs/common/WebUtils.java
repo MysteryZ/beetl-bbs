@@ -52,7 +52,7 @@ public  class WebUtils {
 		String userCookie = getCookie(request, cookieKey);
 		// 1.cookie为空，直接清除
 		if (StringUtils.isEmpty(userCookie)) {
-			removeCookie(response, cookieKey);
+			removeCookie(cookieKey);
 			return null;
 		}
 		// 2.解密cookie
@@ -66,13 +66,13 @@ public  class WebUtils {
 		}
 		// 3.异常或解密问题，直接清除cookie信息
 		if (StringUtils.isEmpty(cookieInfo)) {
-			removeCookie(response, cookieKey);
+			removeCookie(cookieKey);
 			return null;
 		}
 		String[] userInfo = cookieInfo.split("~");
 		// 4.规则不匹配
 		if (userInfo.length < 4) {
-			removeCookie(response, cookieKey);
+			removeCookie(cookieKey);
 			return null;
 		}
 		String userId   = userInfo[0];
@@ -84,22 +84,22 @@ public  class WebUtils {
 			long now  = System.currentTimeMillis();
 			long time = Long.parseLong(oldTime) + (Long.parseLong(maxAge) * 1000);
 			if (time <= now) {
-				removeCookie(response, cookieKey);
+				removeCookie(cookieKey);
 				return null;
 			}
 		}
 		if(userId == null || "null".equals(userId)){
-			removeCookie(response, cookieKey);
+			removeCookie(cookieKey);
 			return null;
 		}
 		if(password == null || "".equals(password.trim())){
-			removeCookie(response, cookieKey);
+			removeCookie(cookieKey);
 			return null;
 		}
 		BbsUser user =  userDao.unique(Integer.valueOf(userId));
 		
 		if(!HashKit.md5(user.getPassword()).equals(password)) {
-			removeCookie(response, cookieKey);
+			removeCookie(cookieKey);
 			return null;
 		}
 		
@@ -130,7 +130,7 @@ public  class WebUtils {
 			maxAge      = 60 * 60 * 24 * 30; // 30天
 		}
 		// 用户id地址
-		String ip		= getIP(request);
+		String ip		= getIP();
 		// 构造cookie
 
 		// cookie 私钥
@@ -144,7 +144,7 @@ public  class WebUtils {
 		String userCookie = new AESUtils(secret).encryptString(cookieBuilder);
 		String cookieKey  = Const.USER_COOKIE_KEY;
 		// 设置用户的cookie、 -1 维持成session的状态
-		setCookie(response, cookieKey, userCookie, maxAge);
+		setCookie(cookieKey, userCookie, maxAge);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public  class WebUtils {
 	 */
 	public void logoutUser() {
 		request.getSession().removeAttribute("user");
-		removeCookie(response, Const.USER_COOKIE_KEY);
+		removeCookie(Const.USER_COOKIE_KEY);
 		
 	}
 
@@ -174,14 +174,14 @@ public  class WebUtils {
 	/**
 	 * 清除 某个指定的cookie 
 	 */
-	public static void removeCookie(HttpServletResponse response, String key) {
-		setCookie(response, key, null, 0);
+	public void removeCookie(String key) {
+		setCookie(key, null, 0);
 	}
 
 	/**
 	 * 设置cookie
 	 */
-	public static void setCookie(HttpServletResponse response, String name, String value, int maxAgeInSeconds) {
+	public void setCookie(String name, String value, int maxAgeInSeconds) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setPath("/");
 		cookie.setMaxAge(maxAgeInSeconds);
@@ -195,14 +195,14 @@ public  class WebUtils {
 	/**
 	 * 获取浏览器信息
 	 */
-	public static String getUserAgent(HttpServletRequest request) {
+	public String getUserAgent() {
 		return request.getHeader("User-Agent");
 	}
 
 	/**
 	 * 获取ip
 	 */
-	public static String getIP(HttpServletRequest request) {
+	public String getIP() {
 		String ip = request.getHeader("X-Requested-For");
 		if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getHeader("X-Forwarded-For");
@@ -225,7 +225,7 @@ public  class WebUtils {
 		return ip;
 	}
 	
-	public  boolean isAdmin(HttpServletRequest request,HttpServletResponse response) {
+	public  boolean isAdmin() {
 		BbsUser user = this.currentUser();
 		if(user==null){
 			throw new RuntimeException("未登陆用户");

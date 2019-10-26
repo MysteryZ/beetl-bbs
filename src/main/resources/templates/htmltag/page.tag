@@ -4,7 +4,7 @@
   <ul class="pagination">
 	@if(query.totalPage<=10){//小于10页直接全部输出
 		@for(var i in range(1,query.totalPage+1)){
-			<li class="${i==query.pageNumber?'active'}"><a href="${pageUrl}${i}${pageUrlParameter}">${i}</a></li>
+			<li class="${i==query.pageNumber?'active'}"><a href="${ctxPath}${pageUrl}${i}${pageUrlParameter}">${i}</a></li>
 		@}
 	@}else{
 		@var maxdiff = query.totalPage-query.pageNumber;

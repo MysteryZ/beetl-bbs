@@ -1,9 +1,9 @@
 package com.ibeetl.bbs.util;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.beetl.core.Context;
 import org.beetl.core.Function;
+
+import javax.servlet.http.HttpServletRequest;
 /**
  * 获取翻页的url，比如:
  * url/1.html
@@ -25,7 +25,12 @@ public class PageUrlPatternFunction implements Function {
 			//网站有俩种翻页url格式
 			int index = url.lastIndexOf("-");
 			if(index==-1){
-				return url.substring(0, url.lastIndexOf("/")+1);
+				int lastIndex = url.lastIndexOf("/")+1;
+				if (url.substring(lastIndex).matches("\\d+|/")){
+					return url.substring(0, url.lastIndexOf("/")+1);
+				} else {
+					return url;
+				}
 			}else{
 				return url.substring(0, index+1);
 			}

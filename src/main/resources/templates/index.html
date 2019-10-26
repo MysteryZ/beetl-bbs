@@ -32,8 +32,8 @@
 						<span>浏览: ${topic.pv}</span>
 					</div>							
 					<div class="post">
-							<a class="tiezi" href="${ctxPath}/bbs/topic/${topic.id}">${topic.content,xss}</a>&nbsp;&nbsp;
-							<a class="type" href="${ctxPath}/bbs/topic/module/${topic.moduleId}">${topic.tails.moduleName}</a>
+							<a class="tiezi" href="topic/${topic.id}">${topic.content,xss}</a>&nbsp;&nbsp;
+							<a class="type" href="topic/module/${topic.moduleId}">${topic.tails.moduleName}</a>
 					</div>
 					@if(isAdmin){
 					<div class="admin" data-topic=${topic.id}>
@@ -49,21 +49,21 @@
 	   <#page query="${topicPage}"/>
        <script>
        $('#post-list').on('click','.nice-btn',function(){
-    	   $.post('${ctxPath}/bbs/admin/topic/nice/'+$(this).parents('div').data('topic'),function(json){
+    	   $.post('admin/topic/nice/'+$(this).parents('div').data('topic'),function(json){
     		   json.err||location.reload();
     	   })
        }).on('click','.top-btn',function(){
-    	   $.post('${ctxPath}/bbs/admin/topic/up/'+$(this).parents('div').data('topic'),function(json){
+    	   $.post('admin/topic/up/'+$(this).parents('div').data('topic'),function(json){
     		   json.err||location.reload();
     	   })
        }).on('click','.del-user-btn',function(){
-    	   $.post('${ctxPath}/bbs/admin/topic/deleteUser/'+$(this).parents('div').data('topic'),function(json){
+    	   $.post('admin/topic/deleteUser/'+$(this).parents('div').data('topic'),function(json){
     		   json.err||location.reload();
     	   })
        }).on('click','.del-btn',function(){
     	   var topicid = $(this).parents('div').data('topic');
     	   $.confirm('确定要删除该主题么？',function(e){
-    		   e&&$.post('${ctxPath}/bbs/admin/topic/delete/'+topicid,function(json){
+    		   e&&$.post('admin/topic/delete/'+topicid,function(json){
         		   json.err||location.reload();
         	   })
     	   })

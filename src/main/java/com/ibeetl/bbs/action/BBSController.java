@@ -9,14 +9,8 @@ import com.ibeetl.bbs.es.annotation.EsIndexType;
 import com.ibeetl.bbs.es.annotation.EsOperateType;
 import com.ibeetl.bbs.es.service.EsService;
 import com.ibeetl.bbs.es.vo.IndexObject;
-import com.ibeetl.bbs.model.BbsMessage;
-import com.ibeetl.bbs.model.BbsModule;
-import com.ibeetl.bbs.model.BbsPost;
-import com.ibeetl.bbs.model.BbsReply;
-import com.ibeetl.bbs.model.BbsTopic;
-import com.ibeetl.bbs.model.BbsUser;
+import com.ibeetl.bbs.model.*;
 import com.ibeetl.bbs.service.BBSService;
-import com.ibeetl.bbs.service.BbsUserService;
 import com.ibeetl.bbs.util.AddressUtil;
 import com.ibeetl.bbs.util.DateUtil;
 import com.ibeetl.bbs.util.Functions;
@@ -32,35 +26,25 @@ import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequestMapping({"/bbs",""})
 @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "ResultOfMethodCallIgnored"})
 public class BBSController {
 
     SQLManager          sql;
-    BbsUserService      gitUserService;
     BBSService          bbsService;
     WebUtils            webUtils;
     Functions           functionUtil;
@@ -72,7 +56,7 @@ public class BBSController {
 
     Pattern mediaTypePattern = Pattern.compile("(?i)^image/(.+)$");
 
-    @GetMapping({"", "/bbs/index", "/bbs/index/{p}"})
+    @GetMapping({"", "/{p}", "/index", "/index/{p}"})
     public String index(@PathVariable Optional<Integer> p, String keyword) {
         String view;
         if (StringUtils.isBlank(keyword)) {
@@ -93,14 +77,14 @@ public class BBSController {
         return view;
     }
 
-    @GetMapping("/bbs/myMessage")
+    @GetMapping("/myMessage")
     public String myPage() {
         BbsUser user = webUtils.currentUser();
         request.setAttribute("list", bbsService.getMyTopics(user.getId()));
         return "/message.html";
     }
 
-    @GetMapping("/bbs/my/{p}")
+    @GetMapping("/my/{p}")
     public String openMyTopic(@PathVariable int p) {
         BbsUser    user    = webUtils.currentUser();
         BbsMessage message = bbsService.makeOneBbsMessage(user.getId(), p, 0);
@@ -108,21 +92,21 @@ public class BBSController {
         return "redirect:/bbs/topic/" + p;
     }
 
-    @GetMapping({"/bbs/topic/hot", "/bbs/topic/hot/{p}"})
+    @GetMapping({"/topic/hot", "/topic/hot/{p}"})
     public String hotTopic(@PathVariable Optional<Integer> p) {
         PageQuery query = new PageQuery(p.orElse(1));
         request.setAttribute("topicPage", bbsService.getHotTopics(query));
         return "/bbs/index.html";
     }
 
-    @GetMapping({"/bbs/topic/nice", "/bbs/topic/nice/{p}"})
+    @GetMapping({"/topic/nice", "/topic/nice/{p}"})
     public String niceTopic(@PathVariable Optional<Integer> p) {
         PageQuery query = new PageQuery(p.orElse(1), null);
         request.setAttribute("topicPage", bbsService.getNiceTopics(query));
         return "/bbs/index.html";
     }
 
-    @GetMapping({"/bbs/topic/{id}", "/bbs/topic/{id}/{p}"})
+    @GetMapping({"/topic/{id}", "/topic/{id}/{p}"})
     @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.UPDATE)
     public String topic(@PathVariable Integer id, @PathVariable Optional<Integer> p) {
         PageQuery query = new PageQuery(p.orElse(1));
@@ -140,7 +124,7 @@ public class BBSController {
         return "/detail.html";
     }
 
-    @GetMapping({"/bbs/topic/module/{id}", "/bbs/topic/module/{id}/{p}"})
+    @GetMapping({"/topic/module/{id}", "/topic/module/{id}/{p}"})
     public String module(@PathVariable Integer id, @PathVariable Optional<Integer> p) {
         PageQuery query = new PageQuery<>(p.orElse(1));
         query.setPara("moduleId", id);
@@ -158,7 +142,7 @@ public class BBSController {
      * 文章发布改为Ajax方式提交更友好
      */
     @ResponseBody
-    @PostMapping("/bbs/topic/save")
+    @PostMapping("/topic/save")
     @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.ADD, key = "tid")
     @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.ADD, key = "pid")
     public JSONObject saveTopic(BbsTopic topic, BbsPost post, String code, String title, String postContent) {
@@ -224,7 +208,7 @@ public class BBSController {
         result.put("err", 0);
         result.put("tid", topic.getId());
         result.put("pid", post.getId());
-        result.put("msg", "/bbs/topic/" + topic.getId());
+        result.put("msg", "topic/" + topic.getId());
 
 
         return result;
@@ -235,7 +219,7 @@ public class BBSController {
     }
 
     @ResponseBody
-    @PostMapping("/bbs/post/save")
+    @PostMapping("/post/save")
     @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.ADD)
     public JSONObject savePost(BbsPost post) {
         JSONObject result = new JSONObject();
@@ -256,7 +240,7 @@ public class BBSController {
 
             int pageSize = (int) PageQuery.DEFAULT_PAGE_SIZE;
             int page     = (totalPost / pageSize) + (totalPost % pageSize == 0 ? 0 : 1);
-            result.put("msg", "/bbs/topic/" + post.getTopicId() + "/" + page);
+            result.put("msg", "topic/" + post.getTopicId() + "/" + page);
             result.put("err", 0);
             result.put("id", post.getId());
         }
@@ -268,7 +252,7 @@ public class BBSController {
      * 回复评论改为Ajax方式提升体验
      */
     @ResponseBody
-    @PostMapping("/bbs/reply/save")
+    @PostMapping("/reply/save")
     @EsIndexType(entityType = EsEntityType.BbsReply, operateType = EsOperateType.ADD)
     public JSONObject saveReply(BbsReply reply) {
         JSONObject result = new JSONObject();
@@ -293,7 +277,7 @@ public class BBSController {
         return result;
     }
 
-    @RequestMapping("/bbs/user/{id}")
+    @RequestMapping("/user/{id}")
     public String saveUser(@PathVariable int id) {
         BbsUser user = sql.unique(BbsUser.class, id);
         request.setAttribute("user", user);
@@ -302,7 +286,7 @@ public class BBSController {
 
 
     // ============== 上传文件路径：项目根目录 upload
-    @PostMapping("/bbs/upload")
+    @PostMapping("/upload")
     @ResponseBody
     public Map<String, Object> upload(@RequestParam("editormd-image-file") MultipartFile file) {
         Map<String, Object> map = new HashMap<>();
@@ -324,7 +308,7 @@ public class BBSController {
                     fileout.mkdirs();
                 }
                 FileCopyUtils.copy(file.getBytes(), new File(filePaths + newName));
-                map.put("file_path", request.getContextPath() + "/bbs/showPic/" + newName);
+                map.put("file_path", request.getContextPath() + "/showPic/" + newName);
                 map.put("msg", "图片上传成功！");
                 map.put("success", true);
                 return map;
@@ -340,209 +324,10 @@ public class BBSController {
 
     // ======================= admin
 
-
-    @ResponseBody
-    @PostMapping("/bbs/admin/topic/nice/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.UPDATE)
-    public JSONObject editNiceTopic(@PathVariable int id) {
-        JSONObject result = new JSONObject();
-        if (!webUtils.isAdmin(request, response)) {
-            //如果有非法使用，不提示具体信息，直接返回null
-            result.put("err", 1);
-            result.put("msg", "呵呵~~");
-        } else {
-            BbsTopic db   = bbsService.getTopic(id);
-            Integer  nice = db.getIsNice();
-            db.setIsNice(nice > 0 ? 0 : 1);
-            bbsService.updateTopic(db);
-            result.put("err", 0);
-            result.put("msg", "success");
-        }
-        return result;
-    }
-
-    @ResponseBody
-    @PostMapping("/bbs/admin/topic/up/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.UPDATE)
-    public JSONObject editUpTopic(@PathVariable int id) {
-        JSONObject result = new JSONObject();
-        if (!webUtils.isAdmin(request, response)) {
-            //如果有非法使用，不提示具体信息，直接返回null
-            result.put("err", 1);
-            result.put("msg", "呵呵~~");
-        } else {
-            BbsTopic db = bbsService.getTopic(id);
-            Integer  up = db.getIsUp();
-            db.setIsUp(up > 0 ? 0 : 1);
-            bbsService.updateTopic(db);
-            result.put("err", 0);
-            result.put("msg", "success");
-        }
-        return result;
-    }
-
-
-    @ResponseBody
-    @PostMapping("/bbs/admin/topic/delete/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.DELETE)
-    public JSONObject deleteTopic(@PathVariable int id) {
-        JSONObject result = new JSONObject();
-        if (!webUtils.isAdmin(request, response)) {
-            //如果有非法使用，不提示具体信息，直接返回null
-            result.put("err", 1);
-            result.put("msg", "呵呵~~");
-        } else {
-            bbsService.deleteTopic(id);
-            result.put("err", 0);
-            result.put("msg", "success");
-        }
-        return result;
-    }
-
-    @ResponseBody
-    @PostMapping("/bbs/admin/topic/deleteUser/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.DELETE)
-    public JSONObject deleteTopicOwner(@PathVariable int id) {
-        JSONObject result = new JSONObject();
-        if (!webUtils.isAdmin(request, response)) {
-            //如果有非法使用，不提示具体信息，直接返回null
-            result.put("err", 1);
-            result.put("msg", "呵呵~~");
-        } else {
-            BbsTopic topic  = bbsService.getTopic(id);
-            Integer  userId = topic.getUserId();
-            this.gitUserService.removeUser(userId);
-            result.put("err", 0);
-            result.put("msg", "success");
-        }
-        return result;
-    }
-
-    @RequestMapping("/bbs/admin/post/{p}")
-    public String adminPosts(@PathVariable int p) {
-        PageQuery query = new PageQuery(p);
-        query.setPara("isAdmin", true);
-        bbsService.getPosts(query);
-        request.setAttribute("postPage", query);
-        return "/bbs/admin/postList.html";
-    }
-
-    @RequestMapping("/bbs/admin/post/edit/{id}")
-    public String editPost(@PathVariable int id) {
-        BbsPost post = sql.unique(BbsPost.class, id);
-        request.setAttribute("post", post);
-        request.setAttribute("topic", sql.unique(BbsTopic.class, post.getTopicId()));
-        return "/postEdit.html";
-    }
-
-    /**
-     * ajax方式编辑内容
-     */
-    @ResponseBody
-    @RequestMapping("/bbs/admin/post/update")
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.UPDATE)
-    public JSONObject updatePost(BbsPost post) {
-        JSONObject result = new JSONObject();
-        result.put("err", 1);
-        if (post.getContent().length() < 10) {
-            result.put("msg", "输入的内容太短，请重新编辑！");
-        } else {
-            BbsPost db = sql.unique(BbsPost.class, post.getId());
-            if (canUpdatePost(db)) {
-                db.setContent(post.getContent());
-                bbsService.updatePost(db);
-                result.put("id", post.getId());
-                result.put("msg", "/bbs/topic/" + db.getTopicId());
-                result.put("err", 0);
-            } else {
-                result.put("msg", "不是自己发表的内容无法编辑！");
-            }
-        }
-        return result;
-    }
-
-    /**
-     * ajax方式删除内容
-     */
-    @ResponseBody
-    @RequestMapping("/bbs/admin/post/delete/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.DELETE)
-    public JSONObject deletePost(@PathVariable int id) {
-        JSONObject result = new JSONObject();
-        BbsPost    post   = sql.unique(BbsPost.class, id);
-        if (canUpdatePost(post)) {
-            bbsService.deletePost(id);
-            result.put("err", 0);
-            result.put("msg", "删除成功！");
-        } else {
-            result.put("err", 1);
-            result.put("msg", "不是自己发表的内容无法删除！");
-        }
-        return result;
-    }
-
-
-    @ResponseBody
-    @PostMapping("/bbs/admin/reply/delete/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsReply, operateType = EsOperateType.DELETE)
-    public JSONObject deleteReply(@PathVariable int id) {
-
-        JSONObject result = new JSONObject();
-        if (canDeleteReply(id)) {
-            bbsService.deleteReplay(id);
-            result.put("err", 0);
-            result.put("msg", "success");
-        } else {
-            result.put("err", 1);
-            result.put("msg", "无法删除他人的回复");
-        }
-        return result;
-    }
-
-    private boolean canDeleteReply(Integer replyId) {
-
-        BbsUser  user  = this.webUtils.currentUser();
-        BbsReply reply = bbsService.getReply(replyId);
-        if (reply.getUserId().equals(user.getId())) {
-            return true;
-        }
-        //如果是admin
-        return user.getUserName().equals("admin");
-    }
-
-    private boolean canUpdatePost(BbsPost post) {
-
-        BbsUser user = this.webUtils.currentUser();
-        if (post.getUserId().equals(user.getId())) {
-            return true;
-        }
-        //如果是admin
-        return user.getUserName().equals("admin");
-    }
-
-    /**
-     * 初始化索引
-     */
-    @ResponseBody
-    @RequestMapping("/bbs/admin/es/init")
-    public JSONObject initEsIndex() {
-        JSONObject result = new JSONObject();
-        if (!webUtils.isAdmin(request, response)) {
-            //如果有非法使用，不提示具体信息，直接返回null
-            result.put("err", 1);
-            result.put("msg", "呵呵~~");
-        } else {
-            esService.initIndex();
-            result.put("err", 0);
-            result.put("msg", "ES初始化成功");
-        }
-        return result;
-    }
-
     /**
      * 踩或顶 评论
      */
-    @PostMapping("/bbs/post/support/{postId}")
+    @PostMapping("/post/support/{postId}")
     @ResponseBody
     @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.UPDATE)
     public JSONObject updatePostSupport(@PathVariable Integer postId, @RequestParam Integer num) {
@@ -582,7 +367,7 @@ public class BBSController {
     /**
      * 提问人或管理员是否已采纳
      */
-    @PostMapping("/bbs/user/post/accept/{postId}")
+    @PostMapping("/user/post/accept/{postId}")
     @ResponseBody
     @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.UPDATE)
     public JSONObject updatePostAccept(@PathVariable Integer postId) {
@@ -590,7 +375,7 @@ public class BBSController {
         result.put("err", 1);
         BbsUser user = webUtils.currentUser();
         BbsPost post = bbsService.getPost(postId);
-        if (user == null || post == null || !webUtils.isAdmin(request, response) || !user.getId().equals(post.getUserId())) {
+        if (user == null || post == null || !webUtils.isAdmin() || !user.getId().equals(post.getUserId())) {
             result.put("err", 1);
             result.put("msg", "无法操作");
         } else {

@@ -1,5 +1,5 @@
 @layout("/common/layout.html",{requiredEditor:true}){
-<form action="${ctxPath}/bbs/topic/save" method="post" id="post-form" onsubmit="return ajaxSubmit(this)">
+<form action="topic/save" method="post" id="post-form" onsubmit="return ajaxSubmit(this)">
 	<fieldset>
 		<legend>发表主题</legend>
 
@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-sm-4" >
                     <input id="code" placeholder="输出验证码" name="code" class="form-control" type="text" aria-required="true" aria-invalid="false" class="valid">
-                    <img src="${ctxPath}/bbs/user/postAuthImage" onclick="this.src='${ctxPath}/bbs/user/postAuthImage?_='+Date.now()" title="点击刷新验证码" style="position:absolute;height:32px;top:1px;right:16px;cursor:pointer;border-radius:0 4px 4px 0">
+                    <img src="user/postAuthImage" onclick="this.src='user/postAuthImage?_='+Date.now()" title="点击刷新验证码" style="position:absolute;height:32px;top:1px;right:16px;cursor:pointer;border-radius:0 4px 4px 0">
                 </div>
             </div>
 

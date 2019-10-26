@@ -1,5 +1,5 @@
 @layout("/common/layout.html",{requiredEditor:true}){
-<form action="${ctxPath}/bbs/admin/post/update" method="post" onsubmit="return ajaxSubmit(this)">
+<form action="admin/post/update" method="post" onsubmit="return ajaxSubmit(this)">
 	<input type="hidden" name="id" value="${post.id}"/>
 	<h3>主题：${topic.content}</h3>
 	<div class="form-group">

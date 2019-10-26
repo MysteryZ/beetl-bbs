@@ -63,7 +63,6 @@ public class EsService {
     }
 
     public void editEsIndexFallback(EsEntityType entityType, EsOperateType operateType, Object id) {
-        log.warn("ES服务[editEsIndex]降级处理...");
     }
 
     /**
@@ -82,7 +81,6 @@ public class EsService {
     }
 
     public void initIndexFallback() {
-        log.warn("ES服务[editEsIndex]降级处理...");
     }
 
     /**
@@ -259,7 +257,6 @@ public class EsService {
     }
 
     public PageQuery<IndexObject> getQueryPageFallback(String keyword, int p) {
-        log.warn("ES服务[getQueryPage]降级处理...");
         if (p <= 0) {
             p = 1;
         }
