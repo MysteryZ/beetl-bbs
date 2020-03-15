@@ -3,6 +3,7 @@ package com.ibeetl.bbs.es.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.ibeetl.bbs.es.annotation.EsEntityType;
 import com.ibeetl.bbs.es.annotation.EsFallback;
 import com.ibeetl.bbs.es.annotation.EsOperateType;
@@ -158,7 +159,7 @@ public class EsService {
      */
     private void saveBbsIndex(BbsIndex bbsIndex) {
         try {
-            executor.execute(Request.Post(esConfig.getContentUrl() + bbsIndex)
+            executor.execute(Request.Put(esConfig.getContentUrl()+bbsIndex.getId())
                     .bodyString(JSON.toJSONString(bbsIndex), ContentType.APPLICATION_JSON))
                     .discardContent();
         } catch (Exception e) {
@@ -206,9 +207,15 @@ public class EsService {
 
             List<IndexObject> indexObjectList = new ArrayList<>();
             JSONObject root = JSON.parseObject(result);
-            JSONObject hits = root.getJSONObject("hits");
-            long     total = hits.getLongValue("total");
-            JSONArray  arrays = hits.getJSONArray("hits");
+            Object totalObj = JSONPath.eval(root, "$.hits.total");
+            long     total;
+            if (totalObj instanceof JSONObject) {
+                //兼容ES7(最后测试通过版本:v)
+                total = ((JSONObject) totalObj).getLongValue("value");
+            } else {
+                total = Long.parseLong(totalObj.toString());
+            }
+            JSONArray  arrays = (JSONArray) JSONPath.eval(root, "$.hits.hits");
             for (int i = 0; i < arrays.size(); i++) {
                 JSONObject node = arrays.getJSONObject(i);
                 double   score = node.getDoubleValue("_score");
