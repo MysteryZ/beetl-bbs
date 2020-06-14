@@ -312,12 +312,7 @@ public class LuceneService implements SearchService{
 				document.add(pvField);
 
 				// 将信息写入到索引库中
-				Document dbDocument = getDocument(indexReader, t.getId());
-				if(dbDocument == null) {
-					indexWriter.addDocument(document);
-				}else {
-					indexWriter.updateDocument(new Term("id",t.getId()), document);
-				}
+				indexWriter.updateDocument(new Term("id",t.getId()), document);
 			}
 			if (bbsIndexList.size() > 0) {
 				indexWriter.commit();
@@ -338,14 +333,12 @@ public class LuceneService implements SearchService{
 		}
     }
 
-    private Document getDocument(IndexReader reader,String id) {
-    	
+    private List<Document> getDocumentList(IndexReader reader,Query query) {
+    	 List<Document> list = new ArrayList<>();
     	 try {
 			IndexSearcher searcher = new IndexSearcher(reader);
 			 //搜索：第一个参数：查询语句对象  第二个参数：指定显示记录数
-			 Term term = new Term("id", id);
-			 Query query = new TermQuery(term);
-			TopDocs search = searcher.search(query, 1);
+			TopDocs search = searcher.search(query, 20);
 			//从搜索结果对象中获取结果集
 			ScoreDoc [] scoreDocs=search.scoreDocs;
 			for(ScoreDoc scoreDoc:scoreDocs){
@@ -353,12 +346,12 @@ public class LuceneService implements SearchService{
 			    int docId=scoreDoc.doc;
 			    //通过文档ID从硬盘上获取文档
 			    Document document = reader.document(docId);
-			    return document;
+			    list.add(document);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return null;
+		return list;
     }
     
     /**
