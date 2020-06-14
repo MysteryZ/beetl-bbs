@@ -1,22 +1,19 @@
 package com.ibeetl.bbs.action;
 
-import com.alibaba.fastjson.JSONObject;
-import com.ibeetl.bbs.common.WebUtils;
-import com.ibeetl.bbs.config.BbsConfig;
-import com.ibeetl.bbs.config.CaffeineConfig;
-import com.ibeetl.bbs.es.annotation.EsEntityType;
-import com.ibeetl.bbs.es.annotation.EsIndexType;
-import com.ibeetl.bbs.es.annotation.EsOperateType;
-import com.ibeetl.bbs.es.service.EsService;
-import com.ibeetl.bbs.es.vo.IndexObject;
-import com.ibeetl.bbs.model.*;
-import com.ibeetl.bbs.service.BBSService;
-import com.ibeetl.bbs.util.AddressUtil;
-import com.ibeetl.bbs.util.DateUtil;
-import com.ibeetl.bbs.util.Functions;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.engine.PageQuery;
@@ -26,16 +23,37 @@ import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.alibaba.fastjson.JSONObject;
+import com.ibeetl.bbs.common.WebUtils;
+import com.ibeetl.bbs.config.BbsConfig;
+import com.ibeetl.bbs.config.CaffeineConfig;
+import com.ibeetl.bbs.es.annotation.EntityType;
+import com.ibeetl.bbs.es.annotation.EsIndexType;
+import com.ibeetl.bbs.es.annotation.EsOperateType;
+import com.ibeetl.bbs.es.service.SearchService;
+import com.ibeetl.bbs.es.vo.IndexObject;
+import com.ibeetl.bbs.model.BbsMessage;
+import com.ibeetl.bbs.model.BbsModule;
+import com.ibeetl.bbs.model.BbsPost;
+import com.ibeetl.bbs.model.BbsReply;
+import com.ibeetl.bbs.model.BbsTopic;
+import com.ibeetl.bbs.model.BbsUser;
+import com.ibeetl.bbs.service.BBSService;
+import com.ibeetl.bbs.util.AddressUtil;
+import com.ibeetl.bbs.util.DateUtil;
+import com.ibeetl.bbs.util.Functions;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Controller
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -48,7 +66,7 @@ public class BBSController {
     BBSService          bbsService;
     WebUtils            webUtils;
     Functions           functionUtil;
-    EsService           esService;
+    SearchService           searchService;
     CacheManager        cacheManager;
     BbsConfig           bbsConfig;
     HttpServletRequest  request;
@@ -69,7 +87,7 @@ public class BBSController {
         } else {
             view = "/lucene/lucene.html";
             //查询索引
-            PageQuery<IndexObject> searcherKeywordPage = this.esService.getQueryPage(keyword, p.orElse(1));
+            PageQuery<IndexObject> searcherKeywordPage = this.searchService.getQueryPage(keyword, p.orElse(1));
             request.setAttribute("searcherPage", searcherKeywordPage);
             request.setAttribute("pageName", keyword);
             request.setAttribute("resultnum", searcherKeywordPage.getTotalRow());
@@ -107,7 +125,7 @@ public class BBSController {
     }
 
     @GetMapping({"/topic/{id}", "/topic/{id}/{p}"})
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.UPDATE)
+    @EsIndexType(entityType = EntityType.BbsTopic, operateType = EsOperateType.UPDATE)
     public String topic(@PathVariable Integer id, @PathVariable Optional<Integer> p) {
         PageQuery query = new PageQuery(p.orElse(1));
         query.setPara("topicId", id);
@@ -143,8 +161,8 @@ public class BBSController {
      */
     @ResponseBody
     @PostMapping("/topic/save")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.ADD, key = "tid")
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.ADD, key = "pid")
+    @EsIndexType(entityType = EntityType.BbsTopic, operateType = EsOperateType.ADD, key = "tid")
+    @EsIndexType(entityType = EntityType.BbsPost, operateType = EsOperateType.ADD, key = "pid")
     public JSONObject saveTopic(BbsTopic topic, BbsPost post, String code, String title, String postContent) {
         //@TODO， 防止频繁提交
         BbsUser user = webUtils.currentUser();
@@ -220,7 +238,7 @@ public class BBSController {
 
     @ResponseBody
     @PostMapping("/post/save")
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.ADD)
+    @EsIndexType(entityType = EntityType.BbsPost, operateType = EsOperateType.ADD)
     public JSONObject savePost(BbsPost post) {
         JSONObject result = new JSONObject();
         result.put("err", 1);
@@ -253,7 +271,7 @@ public class BBSController {
      */
     @ResponseBody
     @PostMapping("/reply/save")
-    @EsIndexType(entityType = EsEntityType.BbsReply, operateType = EsOperateType.ADD)
+    @EsIndexType(entityType = EntityType.BbsReply, operateType = EsOperateType.ADD)
     public JSONObject saveReply(BbsReply reply) {
         JSONObject result = new JSONObject();
         result.put("err", 1);
@@ -329,7 +347,7 @@ public class BBSController {
      */
     @PostMapping("/post/support/{postId}")
     @ResponseBody
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.UPDATE)
+    @EsIndexType(entityType = EntityType.BbsPost, operateType = EsOperateType.UPDATE)
     public JSONObject updatePostSupport(@PathVariable Integer postId, @RequestParam Integer num) {
         JSONObject result = new JSONObject();
         result.put("err", 1);
@@ -369,7 +387,7 @@ public class BBSController {
      */
     @PostMapping("/user/post/accept/{postId}")
     @ResponseBody
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.UPDATE)
+    @EsIndexType(entityType = EntityType.BbsPost, operateType = EsOperateType.UPDATE)
     public JSONObject updatePostAccept(@PathVariable Integer postId) {
         JSONObject result = new JSONObject();
         result.put("err", 1);

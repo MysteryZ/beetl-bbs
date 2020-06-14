@@ -1,21 +1,13 @@
 package com.ibeetl.bbs.es.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPath;
-import com.ibeetl.bbs.es.annotation.EsEntityType;
-import com.ibeetl.bbs.es.annotation.EsFallback;
-import com.ibeetl.bbs.es.annotation.EsOperateType;
-import com.ibeetl.bbs.es.config.EsConfig;
-import com.ibeetl.bbs.es.entity.BbsIndex;
-import com.ibeetl.bbs.es.vo.IndexObject;
-import com.ibeetl.bbs.model.*;
-import com.ibeetl.bbs.service.BBSService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
@@ -27,23 +19,36 @@ import org.beetl.sql.core.engine.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
+import com.ibeetl.bbs.es.annotation.EntityType;
+import com.ibeetl.bbs.es.annotation.EsFallback;
+import com.ibeetl.bbs.es.annotation.EsOperateType;
+import com.ibeetl.bbs.es.config.EsConfig;
+import com.ibeetl.bbs.es.entity.BbsIndex;
+import com.ibeetl.bbs.es.vo.IndexObject;
+import com.ibeetl.bbs.model.BbsModule;
+import com.ibeetl.bbs.model.BbsPost;
+import com.ibeetl.bbs.model.BbsReply;
+import com.ibeetl.bbs.model.BbsTopic;
+import com.ibeetl.bbs.model.BbsUser;
+import com.ibeetl.bbs.service.BBSService;
 
-@Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+import lombok.extern.slf4j.Slf4j;
+
+//@Service
 @Slf4j
-public class EsService {
+public class EsService implements SearchService{
 
+	@Autowired
     BBSService    bbsService;
+	@Autowired
     SQLManager    sqlManager;
+	@Autowired
     EsConfig      esConfig;
+	@Autowired
     GroupTemplate beetlTemplate;
     Executor      executor = Executor.newInstance();
 
@@ -52,7 +57,7 @@ public class EsService {
      * 公共操作方法
      */
     @EsFallback
-    public void editEsIndex(EsEntityType entityType, EsOperateType operateType, Object id) {
+    public void editEsIndex(EntityType entityType, EsOperateType operateType, Object id) {
         if (operateType == EsOperateType.ADD || operateType == EsOperateType.UPDATE) {
             BbsIndex bbsIndex = this.createBbsIndex(entityType, (Integer) id);
             if (bbsIndex != null) {
@@ -63,7 +68,7 @@ public class EsService {
         }
     }
 
-    public void editEsIndexFallback(EsEntityType entityType, EsOperateType operateType, Object id) {
+    public void editEsIndexFallback(EntityType entityType, EsOperateType operateType, Object id) {
     }
 
     /**
@@ -132,18 +137,18 @@ public class EsService {
     /**
      * 创建索引对象
      */
-    public BbsIndex createBbsIndex(EsEntityType entityType, Integer id) {
+    public BbsIndex createBbsIndex(EntityType entityType, Integer id) {
 
         BbsIndex bbsIndex = null;
-        if (entityType == EsEntityType.BbsTopic) {
+        if (entityType == EntityType.BbsTopic) {
             BbsTopic topic     = bbsService.getTopic(id);
             BbsPost  firstPost = bbsService.getFirstPost(topic.getId());
             bbsIndex = new BbsIndex(topic.getId(), null, null, topic.getUserId(), topic.getContent(), topic.getCreateTime(), 0, 0, firstPost != null ? firstPost.getIsAccept() : 0, topic.getPv());
-        } else if (entityType == EsEntityType.BbsPost) {
+        } else if (entityType == EntityType.BbsPost) {
             BbsPost  post  = bbsService.getPost(id);
             BbsTopic topic = bbsService.getTopic(post.getTopicId());
             bbsIndex = new BbsIndex(post.getTopicId(), post.getId(), null, post.getUserId(), post.getContent(), post.getCreateTime(), post.getPros(), post.getCons(), post.getIsAccept(), topic.getPv());
-        } else if (entityType == EsEntityType.BbsReply) {
+        } else if (entityType == EntityType.BbsReply) {
             BbsReply reply = bbsService.getReply(id);
             bbsIndex = new BbsIndex(reply.getTopicId(), reply.getPostId(), reply.getId(), reply.getUserId(), reply.getContent(), reply.getCreateTime(), 0, 0, 0, 0);
         }

@@ -1,0 +1,89 @@
+package com.ibeetl.bbs;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.beetl.sql.core.ClasspathLoader;
+import org.beetl.sql.core.ConnectionSource;
+import org.beetl.sql.core.Interceptor;
+import org.beetl.sql.core.SQLLoader;
+import org.beetl.sql.core.SQLManager;
+import org.beetl.sql.core.UnderlinedNameConversion;
+import org.beetl.sql.core.db.MySqlStyle;
+import org.beetl.sql.ext.DebugInterceptor;
+import org.beetl.sql.ext.gen.GenConfig;
+import org.beetl.sql.ext.gen.GenFilter;
+import org.wltea.analyzer.lucene.IKAnalyzer;
+
+import com.ibeetl.bbs.lucene.LuceneService;
+import com.ibeetl.bbs.lucene.dto.ik.IKAnalyzer5x;
+import com.ibeetl.bbs.lucene.dto.jieba.JiebaAnalyzer;
+import com.ibeetl.bbs.model.BbsUser;
+
+public class SearchTest {
+
+	public static void main(String[] args) throws IOException {
+		String etext = "Analysis is one of the main causes of slow indexing. Simply put, ";
+		// String chineseText = "张三说的确实在理。";
+		String chineseText = "我的新书，我买了一本书,厉害了我的国一经播出，受到各方好评，强烈激发了国人的爱国之情、自豪感！";
+
+		LuceneService service = new LuceneService();
+
+		// IKAnalyzer 细粒度切分
+		try (Analyzer ik = new IKAnalyzer5x(false);) {
+			TokenStream ts = ik.tokenStream("content", etext);
+			System.out.println("IKAnalyzer中文分词器 细粒度切分，英文分词效果：");
+			doToken(ts);
+			ts = ik.tokenStream("content", chineseText);
+			System.out.println("IKAnalyzer中文分词器 细粒度切分，中文分词效果：");
+			doToken(ts);
+		}
+		// IKAnalyzer 智能切分
+		try (Analyzer ik = new IKAnalyzer5x(true);) {
+			TokenStream ts = ik.tokenStream("content", etext);
+			System.out.println("IKAnalyzer中文分词器 智能切分，英文分词效果：");
+			doToken(ts);
+			ts = ik.tokenStream("content", chineseText);
+			System.out.println("IKAnalyzer中文分词器 智能切分，中文分词效果：");
+			doToken(ts);
+		}
+
+		// JiebaAnalyzer 细粒度切分
+		try (Analyzer jieba = new JiebaAnalyzer(false);) {
+			TokenStream ts = jieba.tokenStream("content", etext);
+			System.out.println("JiebaAnalyzer中文分词器 细粒度切分，英文分词效果：");
+			doToken(ts);
+			ts = jieba.tokenStream("content", chineseText);
+			System.out.println("JiebaAnalyzer中文分词器 细粒度切分，中文分词效果：");
+			doToken(ts);
+		}
+		// JiebaAnalyzer 智能切分
+		try (Analyzer jieba = new JiebaAnalyzer(true);) {
+			TokenStream ts = jieba.tokenStream("content", etext);
+			System.out.println("JiebaAnalyzer中文分词器 智能切分，英文分词效果：");
+			doToken(ts);
+			ts = jieba.tokenStream("content", chineseText);
+			System.out.println("JiebaAnalyzer中文分词器 智能切分，中文分词效果：");
+			doToken(ts);
+		}
+
+	}
+
+	private static void doToken(TokenStream ts) throws IOException {
+		ts.reset();
+		CharTermAttribute cta = ts.getAttribute(CharTermAttribute.class);
+		while (ts.incrementToken()) {
+			System.out.print(cta.toString() + "|");
+		}
+		System.out.println();
+		ts.end();
+		ts.close();
+	}
+
+}

@@ -18,7 +18,7 @@
         <!-- The main class to start by executing java -jar -->
         <start-class>com.ibeetl.bbs.BbsMain</start-class>
         <beetl-starter.version>1.2.23.RELEASE</beetl-starter.version>
-        <fastjson.version>1.2.66</fastjson.version>
+        <fastjson.version>1.2.70</fastjson.version>
         <jsoup.version>1.13.1</jsoup.version>
         <commons-text.version>1.8</commons-text.version>
         <commons-lang3.version>3.9</commons-lang3.version>
@@ -107,6 +107,39 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        
+       <dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>8.5.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-queryparser</artifactId>
+		    <version>8.5.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-analyzers-common</artifactId>
+		    <version>8.5.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.janeluo</groupId>
+		    <artifactId>ikanalyzer</artifactId>
+		    <version>2012_u6</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.huaban</groupId>
+		    <artifactId>jieba-analysis</artifactId>
+		    <version>1.0.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-highlighter</artifactId>
+		    <version>8.5.2</version>
+		</dependency>
+        
     </dependencies>
 
 

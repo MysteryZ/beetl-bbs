@@ -1,12 +1,14 @@
 package com.ibeetl.bbs.es.entity;
 
+import java.util.Date;
+
+import com.ibeetl.bbs.es.annotation.EntityType;
 import com.ibeetl.bbs.util.EsUtil;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -26,6 +28,8 @@ public class BbsIndex {
     Integer isAccept = 0;//0：未采纳，1：采纳
     Integer pv       = 0;//访问量
 
+    EntityType entityType;
+    
     public String getId() {
         if (this.id == null) {
             this.id = EsUtil.getEsKey(topicId, postId, replyId);

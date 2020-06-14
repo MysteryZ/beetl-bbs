@@ -1,17 +1,13 @@
 package com.ibeetl.bbs.es.config;
 
-import com.alibaba.fastjson.JSONObject;
-import com.ibeetl.bbs.es.annotation.EsFallback;
-import com.ibeetl.bbs.es.annotation.EsIndexType;
-import com.ibeetl.bbs.es.annotation.EsOperateType;
-import com.ibeetl.bbs.es.entity.BbsIndex;
-import com.ibeetl.bbs.es.service.EsService;
-import com.ibeetl.bbs.es.vo.EsIndexTypeData;
-import com.ibeetl.bbs.util.EsUtil;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -24,9 +20,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
+import com.alibaba.fastjson.JSONObject;
+import com.ibeetl.bbs.es.annotation.EsFallback;
+import com.ibeetl.bbs.es.annotation.EsIndexType;
+import com.ibeetl.bbs.es.annotation.EsOperateType;
+import com.ibeetl.bbs.es.entity.BbsIndex;
+import com.ibeetl.bbs.es.service.SearchService;
+import com.ibeetl.bbs.es.vo.EsIndexTypeData;
+import com.ibeetl.bbs.util.EsUtil;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @Aspect
@@ -35,7 +41,7 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AOPConfig {
 
-    EsService esService;
+	SearchService searchService;
 
 
     /**
@@ -67,7 +73,7 @@ public class AOPConfig {
                     if (id == null) {
                         log.error(target.getClass().getName() + "$" + method.getName() + "：未获取到主键，无法更新索引");
                     } else {
-                        BbsIndex        bbsIndex = esService.createBbsIndex(index.entityType(), id);
+                        BbsIndex        bbsIndex = searchService.createBbsIndex(index.entityType(), id);
                         String          md5Id    = EsUtil.getEsKey(bbsIndex.getTopicId(), bbsIndex.getPostId(), bbsIndex.getReplyId());
                         EsIndexTypeData data     = new EsIndexTypeData(index.entityType(), index.operateType(), md5Id);
                         typeDatas.add(data);
@@ -108,7 +114,7 @@ public class AOPConfig {
 
             //更新索引
             for (EsIndexTypeData esIndexTypeData : typeDatas) {
-                esService.editEsIndex(esIndexTypeData.getEntityType(), esIndexTypeData.getOperateType(), esIndexTypeData.getId());
+            	searchService.editEsIndex(esIndexTypeData.getEntityType(), esIndexTypeData.getOperateType(), esIndexTypeData.getId());
             }
 
             return o;

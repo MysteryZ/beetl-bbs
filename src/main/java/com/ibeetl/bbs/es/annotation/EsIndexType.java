@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 @Repeatable(EsIndexs.class)
 public @interface EsIndexType {
 
-    EsEntityType entityType();                    //实体类型
+    EntityType entityType();                    //实体类型
 
     EsOperateType operateType();            //操作类型
 

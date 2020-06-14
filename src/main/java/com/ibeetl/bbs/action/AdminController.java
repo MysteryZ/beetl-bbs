@@ -1,20 +1,10 @@
 package com.ibeetl.bbs.action;
 
-import com.alibaba.fastjson.JSONObject;
-import com.ibeetl.bbs.common.WebUtils;
-import com.ibeetl.bbs.es.annotation.EsEntityType;
-import com.ibeetl.bbs.es.annotation.EsIndexType;
-import com.ibeetl.bbs.es.annotation.EsOperateType;
-import com.ibeetl.bbs.es.service.EsService;
-import com.ibeetl.bbs.model.BbsPost;
-import com.ibeetl.bbs.model.BbsReply;
-import com.ibeetl.bbs.model.BbsTopic;
-import com.ibeetl.bbs.model.BbsUser;
-import com.ibeetl.bbs.service.BBSService;
-import com.ibeetl.bbs.service.BbsUserService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.engine.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +14,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
+import com.alibaba.fastjson.JSONObject;
+import com.ibeetl.bbs.common.WebUtils;
+import com.ibeetl.bbs.es.annotation.EntityType;
+import com.ibeetl.bbs.es.annotation.EsIndexType;
+import com.ibeetl.bbs.es.annotation.EsOperateType;
+import com.ibeetl.bbs.es.service.SearchService;
+import com.ibeetl.bbs.model.BbsPost;
+import com.ibeetl.bbs.model.BbsReply;
+import com.ibeetl.bbs.model.BbsTopic;
+import com.ibeetl.bbs.model.BbsUser;
+import com.ibeetl.bbs.service.BBSService;
+import com.ibeetl.bbs.service.BbsUserService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 /**
  * @author darren
@@ -45,12 +48,12 @@ public class AdminController {
     BBSService          bbsService;
     BbsUserService      userService;
     SQLManager          sql;
-    EsService           esService;
+    SearchService           searchService;
 
 
     @ResponseBody
     @PostMapping("/topic/nice/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.UPDATE)
+    @EsIndexType(entityType = EntityType.BbsTopic, operateType = EsOperateType.UPDATE)
     public JSONObject editNiceTopic(@PathVariable int id) {
         JSONObject result = new JSONObject();
         if (!webUtils.isAdmin()) {
@@ -70,7 +73,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/topic/up/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.UPDATE)
+    @EsIndexType(entityType = EntityType.BbsTopic, operateType = EsOperateType.UPDATE)
     public JSONObject editUpTopic(@PathVariable int id) {
         JSONObject result = new JSONObject();
         if (!webUtils.isAdmin()) {
@@ -91,7 +94,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/topic/delete/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.DELETE)
+    @EsIndexType(entityType = EntityType.BbsTopic, operateType = EsOperateType.DELETE)
     public JSONObject deleteTopic(@PathVariable int id) {
         JSONObject result = new JSONObject();
         if (!webUtils.isAdmin()) {
@@ -108,7 +111,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/topic/deleteUser/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsTopic, operateType = EsOperateType.DELETE)
+    @EsIndexType(entityType = EntityType.BbsTopic, operateType = EsOperateType.DELETE)
     public JSONObject deleteTopicOwner(@PathVariable int id) {
         JSONObject result = new JSONObject();
         if (!webUtils.isAdmin()) {
@@ -149,7 +152,7 @@ public class AdminController {
      */
     @ResponseBody
     @RequestMapping("/post/update")
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.UPDATE)
+    @EsIndexType(entityType = EntityType.BbsPost, operateType = EsOperateType.UPDATE)
     public JSONObject updatePost(BbsPost post) {
         JSONObject result = new JSONObject();
         result.put("err", 1);
@@ -175,7 +178,7 @@ public class AdminController {
      */
     @ResponseBody
     @RequestMapping("/post/delete/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsPost, operateType = EsOperateType.DELETE)
+    @EsIndexType(entityType = EntityType.BbsPost, operateType = EsOperateType.DELETE)
     public JSONObject deletePost(@PathVariable int id) {
         JSONObject result = new JSONObject();
         BbsPost    post   = sql.unique(BbsPost.class, id);
@@ -193,7 +196,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/reply/delete/{id}")
-    @EsIndexType(entityType = EsEntityType.BbsReply, operateType = EsOperateType.DELETE)
+    @EsIndexType(entityType = EntityType.BbsReply, operateType = EsOperateType.DELETE)
     public JSONObject deleteReply(@PathVariable int id) {
 
         JSONObject result = new JSONObject();
@@ -221,9 +224,9 @@ public class AdminController {
             result.put("err", 1);
             result.put("msg", "呵呵~~");
         } else {
-            esService.initIndex();
+        	searchService.initIndex();
             result.put("err", 0);
-            result.put("msg", "ES初始化成功");
+            result.put("msg", "文章索引初始化成功");
         }
         return result;
     }
