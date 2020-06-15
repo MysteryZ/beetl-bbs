@@ -1,11 +1,13 @@
 package com.ibeetl.bbs.lucene.dto.jieba;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +16,7 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.StopFilter;
+import org.springframework.util.ResourceUtils;
 
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.WordDictionary;
@@ -44,6 +47,14 @@ public class JiebaAnalyzer extends Analyzer{
 		this.useSmart = useSmart;
 	        this.segMode = useSmart?JiebaSegmenter.SegMode.INDEX:JiebaSegmenter.SegMode.SEARCH;
 	        this.stopWords = new CharArraySet(128, true);
+	        File file;
+			try {
+				file = ResourceUtils.getFile("classpath:"+DEFAULT_STOPWORD_FILE);
+				init(file.getParent());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+	        
 	    }
 
 	    /**
@@ -55,10 +66,6 @@ public class JiebaAnalyzer extends Analyzer{
 	        if ( ! StringUtils.isEmpty(userDictPath)){
 	            File file  = new File(userDictPath);
 	            if (file.exists()){
-	                //load user dict
-	                WordDictionary wordDictionary = WordDictionary.getInstance();
-	                wordDictionary.init(Paths.get(userDictPath));
-
 	                //load stop words from userDictPath with name stopwords.txt, one word per line.
 	                loadStopWords(Paths.get(userDictPath, DEFAULT_STOPWORD_FILE) , Charset.forName("UTF-8"));
 	            }

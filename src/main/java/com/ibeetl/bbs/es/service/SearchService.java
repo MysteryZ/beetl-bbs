@@ -16,14 +16,18 @@ public interface SearchService {
 
     public void editEsIndex(EntityType entityType, EsOperateType operateType, Object id);
 
-    public void editEsIndexFallback(EntityType entityType, EsOperateType operateType, Object id) ;
+    public default void editEsIndexFallback(EntityType entityType, EsOperateType operateType, Object id) {
+    	throw new RuntimeException("操作失败");
+    }
 
     /**
      * 重构索引
      */
     public void initIndex() ;
 
-    public void initIndexFallback() ;
+    public default void initIndexFallback() {
+    	throw new RuntimeException("操作失败");
+    }
 
     /**
      * 创建索引对象
@@ -35,7 +39,15 @@ public interface SearchService {
      */
     public PageQuery<IndexObject> getQueryPage(String keyword, int p) ;
 
-    public PageQuery<IndexObject> getQueryPageFallback(String keyword, int p);
+    public default  PageQuery<IndexObject> getQueryPageFallback(String keyword, int p){
+    	if (p <= 0) {
+            p = 1;
+        }
+        int                    pageNumber = p;
+        long                   pageSize   = PageQuery.DEFAULT_PAGE_SIZE;
+        PageQuery<IndexObject> pageQuery  = new PageQuery<>(pageNumber, pageSize);
+        return pageQuery;
+    }
 
 
 }

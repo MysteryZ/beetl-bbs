@@ -19,7 +19,7 @@ elasticsearch.bbs:
   content-search-url: http://127.0.0.1:9200/bbs/content/_search
 
 beetl.suffix: html
-beetl-beetlsql.dev: true
+beetl-beetlsql.dev: false
 beetlsql:
   mutiple.datasource: dataSource
   ds.dataSource.basePackage: com.ibeetl.bbs.dao
