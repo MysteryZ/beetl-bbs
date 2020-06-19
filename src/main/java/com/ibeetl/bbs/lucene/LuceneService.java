@@ -196,10 +196,13 @@ public class LuceneService implements SearchService {
 					} else if (t instanceof BbsPost) {
 						BbsPost post = (BbsPost) t;
 						BbsTopic topic = bbsService.getTopic(post.getTopicId());
-						bbsIndex = new BbsIndex(post.getTopicId(), post.getId(), null, post.getUserId(),
-								post.getContent(), post.getCreateTime(), post.getPros(), post.getCons(),
-								post.getIsAccept(), topic.getPv());
-						bbsIndex.setEntityType(EntityType.BbsPost);
+						if(topic!=null){
+							bbsIndex = new BbsIndex(post.getTopicId(), post.getId(), null, post.getUserId(),
+									post.getContent(), post.getCreateTime(), post.getPros(), post.getCons(),
+									post.getIsAccept(), topic.getPv());
+							bbsIndex.setEntityType(EntityType.BbsPost);
+						}
+
 					} else if (t instanceof BbsReply) {
 						BbsReply reply = (BbsReply) t;
 						bbsIndex = new BbsIndex(reply.getTopicId(), reply.getPostId(), reply.getId(), reply.getUserId(),

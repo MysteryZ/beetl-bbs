@@ -1,6 +1,6 @@
 #beetl-bbs
 
-在社区被黑掉好，决定用java做一个社区，技术使用springboot+beetl+beetsql
+在社区被黑掉好，决定用java做一个社区，技术使用springboot2.3+beetl+beetsql
 
 ## 安装
 
@@ -19,6 +19,12 @@
 * access  http://127.0.0.1:8080/bbs/bbs/index/1.html,login as admin/123456 or register new user
 
 * maven install  生成的war包部署到服务器上
+
+## 切换搜索引擎
+
+默认自带luncense，以管理员登录后， 点击初始化引擎。 
+
+如果需要使用ES作为帖子搜索引擎
 
 * 安装elastic search 作为全文搜索：下载 https://www.elastic.co/cn/downloads/elasticsearch (截止当前测试ES版本7.2.0 通过),进入bin目录，调用elasticsearch 启动
 
