@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.beetl.sql.annotation.entity.AutoID;
 import org.beetl.sql.core.TailBean;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class BbsUser extends TailBean {
+	@AutoID
     Integer id;
     Integer level;
     Integer score;

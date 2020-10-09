@@ -7,6 +7,7 @@ import com.ibeetl.bbs.model.BbsReply;
 import com.ibeetl.bbs.model.BbsTopic;
 import com.ibeetl.bbs.model.BbsUser;
 import org.beetl.sql.core.engine.PageQuery;
+import org.beetl.sql.core.page.PageResult;
 
 import java.util.Date;
 import java.util.List;
@@ -81,6 +82,6 @@ public interface BBSService {
 
     BbsModule getModule(Integer id);
 
-    PageQuery<BbsPost> queryPostByContent(String keyWord, long pageNum, long pageSize);
+	PageResult<BbsPost> queryPostByContent(String keyWord, long pageNum, long pageSize);
 
 }

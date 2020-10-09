@@ -1,9 +1,11 @@
 package com.ibeetl.bbs.dao;
 
 import com.ibeetl.bbs.model.BbsTopic;
-import org.beetl.sql.core.annotatoin.Sql;
+
 import org.beetl.sql.core.engine.PageQuery;
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
+import org.beetl.sql.mapper.annotation.Sql;
+
 
 import java.util.Date;
 import java.util.List;

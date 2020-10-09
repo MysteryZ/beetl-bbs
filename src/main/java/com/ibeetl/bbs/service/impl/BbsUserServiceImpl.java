@@ -45,7 +45,7 @@ public class BbsUserServiceImpl implements BbsUserService {
 
     @Override
     public BbsUser setUserAccount(BbsUser user) {
-        userDao.insert(user, true);
+        userDao.insert(user);
         return user;
 
     }

@@ -4,7 +4,10 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
+import org.beetl.sql.annotation.entity.AutoID;
 import org.beetl.sql.core.TailBean;
+import org.beetl.sql.fetch.annotation.Fetch;
+import org.beetl.sql.fetch.annotation.FetchOne;
 
 import java.util.Date;
 import java.util.List;
@@ -16,8 +19,9 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Fetch
 public class BbsPost extends TailBean {
-
+	@AutoID
     Integer id;
     Integer hasReply;
     Integer topicId;
@@ -32,5 +36,9 @@ public class BbsPost extends TailBean {
 
 
     List<BbsReply> replys;
+    @FetchOne("userId")
+    BbsUser bbsUser;
+	@FetchOne("topicId")
+	BbsTopic bbsTopic;
 
 }

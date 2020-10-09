@@ -16,6 +16,7 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.engine.PageQuery;
+import org.beetl.sql.core.page.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -94,10 +95,10 @@ public class EsService implements SearchService{
      */
     private <T> void batchSaveBbsIndex(Class<T> clazz) {
         int curPage  = 1;
-        int pageSize = 500;
+        long pageSize = 500;
 
         while (true) {
-            int     startRow = 1 + (curPage - 1) * pageSize;
+            long     startRow = 1 + (curPage - 1) * pageSize;
             List<T> list     = sqlManager.all(clazz, startRow, pageSize);
             if (list != null && list.size() > 0) {
                 List<BbsIndex> indexList = new ArrayList<>();
@@ -277,7 +278,7 @@ public class EsService implements SearchService{
         String                 kw         = keyword.trim().replaceAll("</?\\w+[^>]>", "");
         PageQuery<IndexObject> pageQuery  = new PageQuery<>(pageNumber, pageSize);
 
-        PageQuery<BbsPost> postPage = bbsService.queryPostByContent(kw, pageNumber, pageSize);
+        PageResult<BbsPost> postPage = bbsService.queryPostByContent(kw, pageNumber, pageSize);
         List<IndexObject> indexObjects = Optional.ofNullable(postPage.getList())
                 .orElse(Collections.emptyList())
                 .stream()

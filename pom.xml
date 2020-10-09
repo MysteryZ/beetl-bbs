@@ -17,7 +17,8 @@
     <properties>
         <!-- The main class to start by executing java -jar -->
         <start-class>com.ibeetl.bbs.BbsMain</start-class>
-        <beetl-starter.version>1.2.33.RELEASE</beetl-starter.version>
+        <beetl-starter.version>1.2.30.Beetl.RELEASE</beetl-starter.version>
+        <beetlsql-starter.version>3.0.1-RELEASE</beetlsql-starter.version>
         <fastjson.version>1.2.70</fastjson.version>
         <jsoup.version>1.13.1</jsoup.version>
         <commons-text.version>1.8</commons-text.version>
@@ -54,6 +55,11 @@
             <groupId>com.ibeetl</groupId>
             <artifactId>beetl-framework-starter</artifactId>
             <version>${beetl-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibeetl</groupId>
+            <artifactId>sql-springboot-starter</artifactId>
+            <version>${beetlsql-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -1,18 +1,17 @@
 package com.ibeetl.bbs.dao;
 
 import com.ibeetl.bbs.model.BbsReply;
-import org.beetl.sql.core.annotatoin.SqlStatement;
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
+import org.beetl.sql.mapper.annotation.Param;
+
 
 import java.util.List;
 
 public interface BbsReplyDao extends BaseMapper<BbsReply> {
-    @SqlStatement(params = "postId")
-    List<BbsReply> allReply(Integer postId);
 
-    @SqlStatement(params = "topicId")
-    void deleteByTopicId(int topicId);
+    List<BbsReply> allReply(@Param("postId") Integer postId);
 
-    @SqlStatement(params = "postId")
-    void deleteByPostId(int postId);
+    void deleteByTopicId(@Param("topicId") int topicId);
+
+    void deleteByPostId(@Param("postId") int postId);
 }

@@ -3,9 +3,9 @@ server:
   servlet.contextPath: /bbs
 
 spring.datasource:
-  url: jdbc:mysql://127.0.0.1:3306/bbs?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+  url: jdbc:mysql://127.0.0.1:13306/bbs?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
   username: root
-  password: 123456
+  password: 12345678
   driver-class-name: com.mysql.cj.jdbc.Driver
 
 #搜索方式：es,lucene
@@ -20,10 +20,13 @@ elasticsearch.bbs:
   content-search-url: http://127.0.0.1:9200/bbs/content/_search
 
 beetl.suffix: html
-beetl-beetlsql.dev: false
-beetlsql:
-  mutiple.datasource: dataSource
-  ds.dataSource.basePackage: com.ibeetl.bbs.dao
+
+beetlsql: sqlManager1
+beetlsql.sqlManager1:
+  ds: dataSource
+  basePackage: com.ibeetl.bbs.dao
+  daoSuffix: Dao
+
 
 
 bbs.user:

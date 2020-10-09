@@ -176,10 +176,10 @@ public class LuceneService implements SearchService {
 	 */
 	private <T> void batchSaveBbsIndex(Class<T> clazz) {
 		int curPage = 1;
-		int pageSize = 500;
+		long pageSize = 500;
 
 		while (true) {
-			int startRow = 1 + (curPage - 1) * pageSize;
+			long startRow = 1 + (curPage - 1) * pageSize;
 			List<T> list = sqlManager.all(clazz, startRow, pageSize);
 			if (list != null && list.size() > 0) {
 				List<BbsIndex> indexList = new ArrayList<>();

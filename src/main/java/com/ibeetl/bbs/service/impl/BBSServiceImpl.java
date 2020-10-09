@@ -19,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.engine.PageQuery;
+import org.beetl.sql.core.page.PageResult;
 import org.beetl.sql.core.query.LambdaQuery;
 import org.beetl.sql.core.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,7 @@ public class BBSServiceImpl implements BBSService {
         List<BbsMessage> list = sql.template(msg);
         if (list.isEmpty()) {
             msg.setStatus(status);
-            sql.insert(msg, true);
+            sql.insert(msg);
             return msg;
         } else {
             msg = list.get(0);
@@ -141,7 +142,7 @@ public class BBSServiceImpl implements BBSService {
         return query;
     }
 
-    @Cacheable(cacheNames = "bbsPostPage", keyGenerator = "pageQueryKeyGenerator")
+//    @Cacheable(cacheNames = "bbsPostPage", keyGenerator = "pageQueryKeyGenerator")
     @Override
     public PageQuery getPosts(PageQuery query) {
         postDao.getPosts(query);
@@ -178,11 +179,11 @@ public class BBSServiceImpl implements BBSService {
     public void saveTopic(BbsTopic topic, BbsPost post, BbsUser user) {
         topic.setUserId(user.getId());
         topic.setCreateTime(new Date());
-        topicDao.insert(topic, true);
+        topicDao.insert(topic);
         post.setUserId(user.getId());
         post.setTopicId(topic.getId());
         post.setCreateTime(new Date());
-        postDao.insert(post, true);
+        postDao.insert(post);
         gitUserService.addTopicScore(user.getId());
     }
 
@@ -206,7 +207,7 @@ public class BBSServiceImpl implements BBSService {
     @CacheEvict(cacheNames = {"bbsPost", "bbsPostPage", "bbsFirstPost", "bbsLatestPost"}, allEntries = true)
     public void savePost(BbsPost post, BbsUser user) {
         post.setUserId(user.getId());
-        postDao.insert(post, true);
+        postDao.insert(post);
         gitUserService.addPostScore(user.getId());
     }
 
@@ -214,7 +215,7 @@ public class BBSServiceImpl implements BBSService {
     @CacheEvict(cacheNames = {"bbsReply", "bbsPostPage"}, allEntries = true)
     @Override
     public void saveReply(BbsReply reply) {
-        replyDao.insert(reply, true);
+        replyDao.insert(reply);
         gitUserService.addReplayScore(reply.getUserId());
     }
 
@@ -306,7 +307,7 @@ public class BBSServiceImpl implements BBSService {
 
     @Override
     @Cacheable(cacheNames = "fallbackQuery", key = "#keyWord.concat(#pageNum)")
-    public PageQuery<BbsPost> queryPostByContent(String keyWord, long pageNum, long pageSize) {
+    public PageResult<BbsPost> queryPostByContent(String keyWord, long pageNum, long pageSize) {
         LambdaQuery<BbsPost> query = sql.lambdaQuery(BbsPost.class);
         if (StringUtils.isNotBlank(keyWord)) {
             query.andLike(BbsPost::getContent, String.format("%%%s%%", keyWord));

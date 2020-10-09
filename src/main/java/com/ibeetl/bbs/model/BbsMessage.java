@@ -3,6 +3,7 @@ package com.ibeetl.bbs.model;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.beetl.sql.annotation.entity.AutoID;
 
 /*
  *
@@ -11,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BbsMessage {
+	@AutoID
     Integer id;
     Integer status;
     Integer topicId;

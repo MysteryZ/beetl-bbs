@@ -285,7 +285,6 @@ public class BBSController {
             reply.setPostId(reply.getPostId());
             reply.setCreateTime(new Date());
             bbsService.saveReply(reply);
-            reply.set("bbsUser", user);
             reply.setUser(user);
             result.put("msg", "评论成功！");
             result.put("err", 0);

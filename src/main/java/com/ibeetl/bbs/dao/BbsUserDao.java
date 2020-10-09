@@ -1,8 +1,9 @@
 package com.ibeetl.bbs.dao;
 
 import com.ibeetl.bbs.model.BbsUser;
-import org.beetl.sql.core.annotatoin.Sql;
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
+import org.beetl.sql.mapper.annotation.Sql;
+
 
 import java.util.List;
 

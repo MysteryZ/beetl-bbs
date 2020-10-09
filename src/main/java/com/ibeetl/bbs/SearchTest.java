@@ -9,22 +9,11 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.beetl.sql.core.ClasspathLoader;
-import org.beetl.sql.core.ConnectionSource;
-import org.beetl.sql.core.Interceptor;
-import org.beetl.sql.core.SQLLoader;
-import org.beetl.sql.core.SQLManager;
-import org.beetl.sql.core.UnderlinedNameConversion;
-import org.beetl.sql.core.db.MySqlStyle;
-import org.beetl.sql.ext.DebugInterceptor;
-import org.beetl.sql.ext.gen.GenConfig;
-import org.beetl.sql.ext.gen.GenFilter;
-import org.wltea.analyzer.lucene.IKAnalyzer;
+
 
 import com.ibeetl.bbs.lucene.LuceneService;
 import com.ibeetl.bbs.lucene.dto.ik.IKAnalyzer5x;
 import com.ibeetl.bbs.lucene.dto.jieba.JiebaAnalyzer;
-import com.ibeetl.bbs.model.BbsUser;
 
 public class SearchTest {
 
