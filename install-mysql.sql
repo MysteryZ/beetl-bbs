@@ -93,27 +93,6 @@ INSERT INTO `bbs_post` VALUES ('217', '69', '4', '<p>&nbsp; &nbsp;<img src=\"/co
 INSERT INTO `bbs_post` VALUES ('218', '69', '4', '<p>什么时候讲？</p>', '2016-07-13 14:37:49', '\0', null, '0', '0', '0');
 INSERT INTO `bbs_post` VALUES ('219', '69', '4', '<p><img src=\"/codeweb//bbs/showPic/1468392229548blob.png\" _src=\"/codeweb//bbs/showPic/1468392229548blob.png\" style=\"width: 700px; height: 444px;\"/></p>', '2016-07-13 14:43:51', '\0', null, '0', '0', '0');
 INSERT INTO `bbs_post` VALUES ('220', '70', '95', '打发第三方\r\n', '2016-12-06 20:31:04', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('221', '70', '95', '### **李宗翰**', '2016-12-06 20:32:32', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('225', '59', '95', '发布2', '2016-12-10 22:44:52', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('226', '59', '95', '发布三', '2016-12-10 22:44:58', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('227', '59', '95', '发布四', '2016-12-10 22:45:50', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('228', '59', '95', '发布无', '2016-12-10 22:45:56', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('229', '59', '95', '发布六', '2016-12-10 22:46:03', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('230', '59', '95', '发布六', '2016-12-10 22:57:22', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('231', '59', '95', 'dfsdf  sfsdf ', '2016-12-10 23:17:02', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('232', '59', '95', 'sdfsf ', '2016-12-10 23:17:27', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('233', '59', '95', 'sdfsf ', '2016-12-10 23:19:00', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('234', '59', '95', 'dfdsf ', '2016-12-11 00:08:16', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('235', '59', '95', 'df ', '2016-12-11 00:08:19', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('237', '59', '95', 'dsfsdfs\r\ndsfdsfsd\r\n[sdfsffdf](http://163.com \"sdfsffdf\")\r\nsdfsdf\r\n## dfdfdfdfdf\r\n', '2016-12-11 15:49:39', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('241', '59', '1', '<pre><code class=\"lang-java\"><br></code></pre>', '2016-12-26 21:46:13', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('242', '59', '1', '<p>sdfsdfsdf</p>', '2016-12-26 21:46:21', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('243', '59', '95', '<p>的说法是否</p><pre><code class=\"lang-java\"> public static void main(String[] args){\r\n&nbsp;&nbsp;&nbsp;&nbsp;\r\n&nbsp;&nbsp;}</code></pre>', '2016-12-26 22:01:13', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('262', '74', '95', '<p>测试我的新手</p>', '2017-10-26 19:00:45', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('263', '74', '95', '<p>测试我的新功能</p>', '2017-10-26 19:01:19', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('264', '75', '95', '<p>beetl 是最好的模板语言 ！！</p>', '2018-01-24 20:09:15', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('265', '76', '95', '<p>作为中国国家主席，习近平在繁忙的公务活动中，不仅展示了他的睿智严谨，还留下了许多风趣幽默的言行。Most people have only seen the serious side of Chinese President Xi Jinping. But he also makes time for some lighthearted moments despite his packed daily schedule. Not only is Xi a statesman, he is also a football fan, a world traveler and occasionally a historian.客串文化讲解员 Witty interpreter“你们看，我的祖先很魁梧吧。<br></p><p><br></p><p>作为中国国家主席，习近平在繁忙的公务活动中，不仅展示了他的睿智严谨，还留下了许多风趣幽默的言行。Most people have only seen the serious side of Chinese President Xi Jinping. But he also makes time for some lighthearted moments despite his packed daily schedule. Not only is Xi a statesman, he is also a football fan, a world traveler and occasionally a historian.客串文化讲解员 Witty interpreter“你们看，我的祖先很魁梧吧。<br></p>', '2018-01-24 20:14:06', '\0', null, '0', '0', '0');
-INSERT INTO `bbs_post` VALUES ('266', '77', '95', '<p>abc沙发上是否sdfsdf&nbsp;</p>', '2018-01-24 20:18:29', '\0', null, '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for bbs_reply
