@@ -297,6 +297,7 @@ public class BBSController {
     @RequestMapping("/user/{id}")
     public String saveUser(@PathVariable int id) {
         BbsUser user = sql.unique(BbsUser.class, id);
+        //request.getSession().setAttribute("user", user);
         request.setAttribute("user", user);
         return "/bbs/user/user.html";
     }

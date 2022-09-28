@@ -145,7 +145,13 @@
 		    <artifactId>lucene-highlighter</artifactId>
 		    <version>8.5.2</version>
 		</dependency>
-        
+
+        <dependency>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>6.2.2</version>
+        </dependency>
+
     </dependencies>
 
 
@@ -153,12 +159,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>6.2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${parent.version}</version>
             </plugin>
             <!-- define the project compile level -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+<!--                <version>3.8.0</version>-->
+<!--                <version>${parent.version}</version>-->
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
