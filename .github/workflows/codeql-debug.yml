@@ -37,6 +37,8 @@ jobs:
         category: "/language:${{matrix.language}}"
         add-snippets: true
 
+    - name: Auto Build CodeQL Databases
+      uses: github/codeql-action/autobuild@v2
 
     - name: Debug Analysis
       uses: MysteryZ/codeql-debug@master
