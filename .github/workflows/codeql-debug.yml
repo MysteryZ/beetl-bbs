@@ -21,10 +21,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    #登录runner
-    - name: Setup Debug Session
-      uses: csexton/debugger-action@master
-      
+
+
     - name: Initialize CodeQL
       id: codeqlinit
       uses: github/codeql-action/init@v2
