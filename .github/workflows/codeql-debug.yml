@@ -31,14 +31,14 @@ jobs:
         languages: ${{ matrix.language }}
         config-file: advanced-security/codeql-queries/config/codeql.yml@main #ql better
 
+    - name: Auto Build CodeQL Databases
+      uses: github/codeql-action/autobuild@v2
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
         category: "/language:${{matrix.language}}"
         add-snippets: true
-
-    - name: Auto Build CodeQL Databases
-      uses: github/codeql-action/autobuild@v2
 
     - name: Debug Analysis
       uses: MysteryZ/codeql-debug@master
