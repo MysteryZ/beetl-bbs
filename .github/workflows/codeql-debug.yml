@@ -38,7 +38,7 @@ jobs:
 
 
     - name: Debug Analysis
-      uses: MysteryZ/codeql-debug@main
+      uses: MysteryZ/codeql-debug
       with:
         language: ${{ matrix.language }}
 
