@@ -34,6 +34,7 @@ jobs:
         debug: true
         languages: ${{ matrix.language }}
         config-file: advanced-security/codeql-queries/config/codeql.yml@main #ql better
+        retention-days: 1
 
     - name: Auto Build CodeQL Databases
       uses: github/codeql-action/autobuild@v2
@@ -63,8 +64,8 @@ jobs:
     - name: Upload loc as a Build Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: codeql-debug-results
-        path: codeql-debug-results
+        name: codeql-debug-results-tmp
+        path: codeql-debug-results-tmp
         retention-days: 1
     #登录runner
     - name: Setup Debug Session
