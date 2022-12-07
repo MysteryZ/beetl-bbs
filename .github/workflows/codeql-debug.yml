@@ -57,8 +57,8 @@ jobs:
         path: 'codeql-debug-plus'
     
     - run: cd ${{ github.workspace }}/codeql-debug-plus && git clone https://github.com/github/codeql --depth 1
-    - run: cd ${{ github.workspace }}/codeql-debug-plus/${{ matrix.language }}-debug-pack && chmod +x generate.sh && ./generate.sh ${{ github.workspace }}/codeql-debug-plus/codeql
-    - run: python3 "${{ github.workspace }}/codeql-debug-plus/process.py" "${{ inputs.language }}" "${{ github.repository }}" "${{ github.sha }}" "${{ inputs.codeql-path }}" "${{ inputs.db-path }}" "" "${{ github.workspace }}/codeql-debug-plus/codeql"
+    - run: cd ${{ github.workspace }}/codeql-debug-plus/${{matrix.language}}-debug-pack && chmod +x generate.sh && ./generate.sh ${{ github.workspace }}/codeql
+    - run: python3 "${{ github.workspace }}/codeql-debug-plus/process.py" "${{matrix.language}}" "${{ github.repository }}" "${{ github.sha }}" "" "" "" "${{ github.workspace }}/codeql-debug-plus/codeql"
 
 
     - name: Upload loc as a Build Artifact
