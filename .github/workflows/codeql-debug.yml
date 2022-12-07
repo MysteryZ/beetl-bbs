@@ -22,6 +22,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: delombok 
+      uses: advanced-security/delombok@main
+      with:
+        directory: "${{ github.workspace }}/src/main/java/com/ibeetl/bbs/action/"
 
     - name: Initialize CodeQL
       id: codeqlinit
