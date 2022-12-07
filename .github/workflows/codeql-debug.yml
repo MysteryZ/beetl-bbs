@@ -56,7 +56,7 @@ jobs:
         path: 'codeql-debug-plus'
     
     - run: cd ${{ github.workspace }}/codeql-debug-plus && git clone https://github.com/github/codeql --depth 1
-    - run: cd ${{ github.workspace }}/codeql-debug-plus ${{ inputs.language }}-debug-pack && chmod +x generate.sh && ./generate.sh ${{ github.workspace }}/codeql
+    - run: cd ${{ github.workspace }}/codeql-debug-plus/${{ inputs.language }}-debug-pack && chmod +x generate.sh && ./generate.sh ${{ github.workspace }}/codeql-debug-plus/codeql
     - run: python3 "${{ github.workspace }}/codeql-debug-plus/process.py" "${{ inputs.language }}" "${{ github.repository }}" "${{ github.sha }}" "${{ inputs.codeql-path }}" "${{ inputs.db-path }}" "" "${{ github.workspace }}/codeql-debug-plus/codeql"
 
 
