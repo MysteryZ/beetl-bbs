@@ -38,16 +38,26 @@ jobs:
     - name: Auto Build CodeQL Databases
       uses: github/codeql-action/autobuild@v2
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-      with:
-        category: "/language:${{matrix.language}}"
-        add-snippets: true
+    # - name: Perform CodeQL Analysis
+    #   uses: github/codeql-action/analyze@v2
+    #   with:
+    #     category: "/language:${{matrix.language}}"
+    #     add-snippets: true
 
-    - name: Debug Analysis
-      uses: MysteryZ/codeql-debug@master
+    # - name: Debug Analysis
+    #   uses: MysteryZ/codeql-debug@master
+    #   with:
+    #     language: ${{ matrix.language }}
+    - name: Checkout repository
+      uses: actions/checkout@v2
       with:
-        language: ${{ matrix.language }}
+        repository: 'MysteryZ/codeql-debug-plus'
+        token: ${{ secrets.TOKEN }}
+        path: 'codeql-debug-plus'
+    
+    - run: cd ${{ github.workspace }}/codeql-debug-plus && git clone https://github.com/github/codeql --depth 1
+    - run: cd ${{ github.workspace }}/codeql-debug-plus ${{ inputs.language }}-debug-pack && chmod +x generate.sh && ./generate.sh ${{ github.workspace }}/codeql
+    - run: python3 "${{ github.workspace }}/codeql-debug-plus/process.py" "${{ inputs.language }}" "${{ github.repository }}" "${{ github.sha }}" "${{ inputs.codeql-path }}" "${{ inputs.db-path }}" "" "${{ github.workspace }}/codeql-debug-plus/codeql"
 
 
     - name: Upload loc as a Build Artifact
@@ -56,7 +66,9 @@ jobs:
         name: codeql-debug-results
         path: codeql-debug-results
         retention-days: 1
-
+    #登录runner
+    - name: Setup Debug Session
+      uses: csexton/debugger-action@master
     # - name: Upload loc as a Build Artifact
     #   uses: actions/upload-artifact@v3
     #   with:
