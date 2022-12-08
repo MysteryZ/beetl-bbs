@@ -17,8 +17,6 @@ jobs:
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
         language: [ 'java' ]
-    env:
-      codeql-debug-plus: ${{ github.workspace }}/codeql-debug-plus
 
     steps:
     - name: Checkout repository
@@ -58,10 +56,7 @@ jobs:
         token: ${{ secrets.TOKEN }}
         path: 'codeql-debug-plus'
     
-    - run: cd ${{ env.codeql-debug-plus }} && git clone https://github.com/github/codeql --depth 1
-    - run: cd ${{ env.codeql-debug-plus }}/${{matrix.language}}-debug-pack && chmod +x generate.sh && ./generate.sh ${{ env.codeql-debug-plus }}/codeql
-    - run: python3 "${{ env.codeql-debug-plus }}/process.py" "${{matrix.language}}" "${{ github.repository }}" "${{ github.sha }}" "" "" "" "${{ env.codeql-debug-plus }}/codeql"
-
+    - run: python3 "${{ github.workspace }}/codeql-debug-plus/process.py" "${{matrix.language}}" "${{ github.repository }}" "${{ github.sha }}"
 
     - name: Upload loc as a Build Artifact
       uses: actions/upload-artifact@v3
